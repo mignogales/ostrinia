@@ -43,6 +43,16 @@ from sklearn.isotonic import IsotonicRegression
 # 1. GDD computation (simple-average method)
 # ---------------------------------------------------------------------------
 
+def _coerce_datetime_index(index: Any, *, name: str) -> pd.DatetimeIndex:
+    """Return a timezone-naive DatetimeIndex for robust resampling/reindexing."""
+    dt_index = pd.DatetimeIndex(pd.to_datetime(index, errors="raise"))
+    if dt_index.tz is not None:
+        dt_index = dt_index.tz_localize(None)
+    if dt_index.hasnans:
+        raise ValueError(f"`{name}` contains invalid timestamps")
+    return dt_index
+
+
 def compute_gdd(
     temperature: np.ndarray,
     timestamps: pd.DatetimeIndex,
@@ -76,6 +86,7 @@ def compute_gdd(
     """
     if temperature.ndim != 2:
         raise ValueError(f"`temperature` must be 2-D (T, N); got {temperature.shape}")
+    timestamps = _coerce_datetime_index(timestamps, name="timestamps")
     if len(timestamps) != temperature.shape[0]:
         raise ValueError("Length of `timestamps` must equal temperature.shape[0]")
 
@@ -109,6 +120,32 @@ def compute_gdd(
     gdd = cum_df.reindex(timestamps, method="ffill").values
     gdd = np.nan_to_num(gdd, nan=0.0)
     return gdd.astype(np.float32)
+
+
+def gdd_to_target_frame(
+    gdd: np.ndarray,
+    timestamps: pd.DatetimeIndex,
+    target_index: pd.Index,
+    columns: Optional[pd.Index] = None,
+) -> pd.DataFrame:
+    """Align computed GDD to the target timeline used by the TSL dataset.
+
+    ``compute_gdd`` returns values at the temperature sampling frequency. The
+    forecasting dataset may be daily, or may carry string dates even when the
+    temperature frame is already datetime-like. Aligning through a DataFrame
+    keeps the covariate explicitly indexed before it is attached horizon-wise.
+    """
+    timestamps = _coerce_datetime_index(timestamps, name="timestamps")
+    target_index = _coerce_datetime_index(target_index, name="target_index")
+    if len(timestamps) != gdd.shape[0]:
+        raise ValueError("Length of `timestamps` must equal gdd.shape[0]")
+
+    gdd_df = pd.DataFrame(gdd, index=timestamps, columns=columns)
+    if gdd_df.index.has_duplicates:
+        gdd_df = gdd_df.groupby(level=0).last()
+
+    aligned = gdd_df.reindex(target_index, method="ffill")
+    return aligned.fillna(0.0).astype(np.float32)
 
 
 # ---------------------------------------------------------------------------

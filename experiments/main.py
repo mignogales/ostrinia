@@ -25,7 +25,12 @@ from models.transformer_spatial import TransformerSpatial
 from models.arimax import fit_arimax, ARIMAXWrapper
 from models.tsl_dcrnn import tsl_dcrnn
 # >>> Degree-Day baseline ---------------------------------------------------
-from models.degree_day import DegreeDayWrapper, compute_gdd, fit_degree_day
+from models.degree_day import (
+    DegreeDayWrapper,
+    compute_gdd,
+    fit_degree_day,
+    gdd_to_target_frame,
+)
 # <<< -----------------------------------------------------------------------
 from extras.predictor import WrapPredictor, WrapPredictorDoubleTarget
 from extras.metrics_logging import MetricsLogger
@@ -218,6 +223,7 @@ def main(cfg: DictConfig):
             temp_arr = np.asarray(raw_temp, dtype=float)
             timestamps = pd.DatetimeIndex(dataset.dataframe().index)
 
+        target_df = dataset.dataframe()
         gdd_full = compute_gdd(
             temperature=temp_arr,
             timestamps=timestamps,
@@ -226,9 +232,16 @@ def main(cfg: DictConfig):
             cutoff=cfg.model.hparams.get("cutoff", "horizontal"),
             biofix_doy=int(cfg.model.hparams.get("biofix_doy", 1)),
         )
+        gdd_df = gdd_to_target_frame(
+            gdd=gdd_full,
+            timestamps=timestamps,
+            target_index=target_df.index,
+            columns=target_df.columns,
+        )
+        gdd_full = gdd_df.values
         torch_dataset.add_covariate(
             name="gdd",
-            value=pd.DataFrame(gdd_full, index=dataset.dataframe().index),
+            value=gdd_df,
             pattern="t n",
             add_to_input_map=True,
             synch_mode='horizon',
