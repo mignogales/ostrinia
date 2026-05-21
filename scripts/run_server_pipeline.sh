@@ -3,11 +3,11 @@ set -euo pipefail
 
 # Quick server runner for the paper pipeline.
 #
-# Stage 1: experiments/results_paper.py trains/evaluates a model and writes:
+# Stage 1: experiments.results_paper trains/evaluates a model and writes:
 #   paper_results/<run_tag>/<seed>/test_results.json
 #   paper_results/<run_tag>/<seed>/predictions.npz
 #
-# Stage 2: get_final_results.py and get_final_outbreak_results.py aggregate
+# Stage 2: get_final_results and get_final_outbreak_results aggregate
 # those saved files.
 #
 # Usage examples:
@@ -29,7 +29,7 @@ fi
 run_experiment() {
   echo
   echo "==> $*"
-  "${PYTHON_CMD[@]}" experiments/results_paper.py "$@"
+  "${PYTHON_CMD[@]}" -m experiments.results_paper "$@"
 }
 
 echo "Repository: $ROOT_DIR"
@@ -75,11 +75,11 @@ done
 # ---------------------------------------------------------------------------
 echo
 echo "==> Aggregating test metrics"
-"${PYTHON_CMD[@]}" get_final_results.py
+"${PYTHON_CMD[@]}" -m get_final_results
 
 echo
 echo "==> Aggregating outbreak-day errors"
-"${PYTHON_CMD[@]}" get_final_outbreak_results.py
+"${PYTHON_CMD[@]}" -m get_final_outbreak_results
 
 echo
 echo "Done. Main outputs:"
