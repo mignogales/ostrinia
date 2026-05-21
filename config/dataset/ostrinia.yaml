@@ -1,0 +1,27 @@
+
+name: ostrinia
+# target: "nb_ostrinia"
+target: "incrementing_ostrinia"
+window: 12
+horizon: 1
+delay: 14
+stride: 1
+splitting:
+  val_len: 0.083333
+  test_len: 0.083333
+connectivity:
+  method: distance
+  threshold: 0.1
+  include_self: False
+  layout: edge_index
+
+log_metrics: ["mae", "mre", "mse", "loss"]
+add_covariates: true
+smooth: true
+sampling: 2
+full_normalization: false
+drop_nodes: false
+
+add_second_target: false
+
+spatial_information: true

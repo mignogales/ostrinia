@@ -1,0 +1,36 @@
+defaults:
+  - _self_
+  - wandb :
+    - sweep
+    - keys
+  - optimizer: default
+  - dataset: ostrinia
+  - model: dummy
+
+#### Experiment params ########################################################
+hydra:
+  run:
+    dir: logs/paper_results/${model.name}/${dataset.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  sweep:
+    dir: logs/paper_results/${now:%Y-%m-%d-%H-%M-%S}
+    subdir: ${model.name}/${dataset.name}/${hydra.job.num}
+
+
+workers: 0
+num_threads: 1
+
+run_dir: logs/${model.name}/${dataset.name}/${now:%Y-%m-%d}/${now:%H-%M-%S}
+run_name: ${now:%Y-%m-%d_%H-%M-%S}_${hydra:job.num}
+
+#### Training params ##########################################################
+# epochs: 50
+patience: 10
+batch_size: 64
+train_batches: 1.0
+# use_node_embeddings: false
+
+# grad_clip_val: 1
+scale_axis: graph
+
+
+

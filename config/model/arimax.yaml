@@ -1,0 +1,9 @@
+
+name: arimax
+hparams:
+  p: 1
+  d: 1
+  q: 1
+  trend: 'n'
+  enforce_stationarity: false
+  enforce_invertibility: false

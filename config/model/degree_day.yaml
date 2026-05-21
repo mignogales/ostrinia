@@ -1,0 +1,32 @@
+# config/models/degree_day.yaml
+#
+# Degree-Day (thermal-time) baseline for Ostrinia adult-flight forecasting.
+# Non-trainable model fitted via OLS / curve_fit / IsotonicRegression in numpy.
+
+name: degree_day
+
+hparams:
+  # ---------------- GDD computation (simple-average method) ----------------
+  t_base: 10.0              # Lower developmental threshold (degC). O. nubilalis ~10.
+  t_upper: 30.0             # Upper threshold (degC); set to null to disable.
+  cutoff: horizontal        # {horizontal, vertical}; behaviour above t_upper.
+  biofix_doy: 1             # Day-of-year for annual reset (1 = 1 January).
+  temperature_key: TempAv   # Key in dataset.extra_data containing temperature.
+
+  # ---------------- Mapping GDD -> target ---------------------------------
+  # linear   : OLS on [1, GDD, GDD^2]            (closed form, fastest)
+  # logistic : 3-parameter sigmoid (Verhulst)    (classical emergence curve)
+  # isotonic : monotone non-decreasing step fn   (non-parametric, flexible)
+  mapping: logistic
+
+  # Pool all (time, node) pairs into a single mapping. Recommended when the
+  # spatial information is sparse or nodes are physically interchangeable;
+  # this matches the IPM convention (UC IPM / NEWA) of one curve per region.
+  pooled: true
+
+  # ---------------- Stubs required by the unified train.py pipeline -------
+  # These are referenced by the shared model_kwargs / wandb config blocks and
+  # have no effect on the Degree-Day model.
+  hidden_size: 0
+  dropout: 0.0
+  use_node_embeddings: false

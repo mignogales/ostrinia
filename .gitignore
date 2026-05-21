@@ -1,0 +1,69 @@
+# Logs / tracking / outputs
+logs/
+wandb/
+outputs/
+
+# Python bytecode / caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+.env
+.env.*
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Data / model artifacts (usually large/derived)
+*.csv
+*.tsv
+*.npy
+*.npz
+*.parquet
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+*.pt
+*.pth
+*.ckpt
+
+# Figures / reports
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.pdf
+*.html
+
+
+# full folders
+logs/
+wandb/
+paper_results/
+plots/
+tools/
+.vscode/
+*.json
+/data 
+*.tex
+
+

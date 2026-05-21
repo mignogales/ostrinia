@@ -1,0 +1,11 @@
+
+name: gat
+hparams:
+  hidden_size: 16
+  n_layers_gnn: 1
+  n_layers_rnn: 1
+  n_heads: 8
+  activation: 'elu'
+  dropout: 0.2
+  use_node_embeddings: true
+  residual: true

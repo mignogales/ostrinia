@@ -1,0 +1,12 @@
+
+name: transformer_spatial
+hparams:
+  hidden_size: 16
+  n_layers_gnn: 2
+  n_layers_transformer: 2
+  kernel_size: 3
+  n_heads: 4
+  ff_multiplier: 4
+  activation: 'relu'
+  dropout: 0.2
+  use_node_embeddings: true

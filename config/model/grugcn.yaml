@@ -1,0 +1,10 @@
+
+name: grugcn
+hparams:
+  hidden_size: 111
+  kernel_size: 3
+  n_layers_rnn: 2
+  n_layers_gnn: 2
+  activation: 'elu'
+  dropout: 0.0
+  use_node_embeddings: true

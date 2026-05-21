@@ -1,0 +1,33 @@
+
+name: ostrinia_synth
+# target: "nb_ostrinia"
+target: "hatching"
+window: 12
+horizon: 1
+delay: 14
+stride: 1
+years: 
+  start: 2000
+  end: 2001
+splitting:
+  val_len: 0.05
+  test_len: 0.05
+n_nodes: 25
+connectivity:
+  method: distance
+  threshold: 0.1
+  include_self: False
+  layout: edge_index
+
+log_metrics: ["mae", "mre", "mse", "loss"]
+add_covariates: true
+smooth: false
+sampling: 2
+full_normalization: false
+drop_nodes: false
+
+add_second_target: false
+
+spatial_information: true
+
+synth_data: "v2"

@@ -1,0 +1,21 @@
+
+name: Adam
+hparams:
+  lr: 0.0008827203974758819
+  weight_decay: 0.0005
+  betas:
+    - 0.9
+    - 0.999
+  eps: 1e-08
+
+lr_scheduler:
+  name: linear
+  T_max: 100
+  eta_min: 0.0
+  last_epoch: -1
+
+epochs: 94
+grad_clip_val: 0
+num_workers: 4
+loss_fn: mae
+alpha: 0.25

@@ -1,0 +1,12 @@
+name: taming-env
+channels:
+  - defaults
+dependencies:
+  - pyg[version='>=2.0']
+  - pytorch[version='>=2.0.0']
+  - pytorch-sparse
+  - torchmetrics=0.11
+  - python=3.10
+  - pytorch-lightning=2.0
+  - pip
+  - pytorch-scatter
