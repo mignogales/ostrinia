@@ -241,7 +241,7 @@ def main(cfg: DictConfig):
         gdd_full = gdd_df.values
         torch_dataset.add_covariate(
             name="gdd",
-            value=gdd_df,
+            value=gdd_full,
             pattern="t n",
             add_to_input_map=True,
             synch_mode='horizon',
