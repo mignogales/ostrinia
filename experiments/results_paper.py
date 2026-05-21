@@ -304,7 +304,9 @@ def main(cfg: DictConfig):
     # <<< --------------------------------------------------------------------
 
     scale_axis = (0,) if cfg.get('scale_axis') == 'node' else (0, 1)
-    transform = {'target': StandardScaler(axis=scale_axis)}
+    # DD model predicts in original units, so skip target scaling to keep
+    # batch.y comparable with y_hat; DL models are trained on scaled targets.
+    transform = None if is_dd else {'target': StandardScaler(axis=scale_axis)}
 
     if cfg.wandb.enable:
         if 'batch_size' in wandb.config.keys():
@@ -475,6 +477,10 @@ def main(cfg: DictConfig):
         y_full = dataset.dataframe().values.astype(np.float32)
         mask_full = dataset.mask.astype(bool) if dataset.mask is not None \
             else np.ones_like(y_full, dtype=bool)
+        # TSL stores the mask as (T, N, 1) after _parse_target pads it to 3D.
+        # fit_degree_day expects (T, N), so squeeze the trailing channel dim.
+        if mask_full.ndim == 3 and mask_full.shape[-1] == 1:
+            mask_full = mask_full.squeeze(-1)
         train_slice = data_module.train_slice
 
         fitted = fit_degree_day(
