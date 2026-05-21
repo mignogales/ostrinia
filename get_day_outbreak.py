@@ -192,6 +192,28 @@ def get_outbreak_from_predictions(y_pred_node_seed, strategy='max_diff', thresho
             else:
                 day_outbreak = -1  # no outbreak detected
 
+    elif strategy == 'dd25':
+        if dataset == 'ostrinia':
+            max_value = np.max(y_pred_node_seed)
+            dd25_value = max_value / 4
+            over_dd25_indices = np.where(y_pred_node_seed >= dd25_value)[0]
+            if len(over_dd25_indices) > 0:
+                day_outbreak = over_dd25_indices[0]
+            else:
+                day_outbreak = -1  # no outbreak detected
+        else:
+            max_value = np.sum(y_pred_node_seed)
+            dd25_value = max_value / 4
+            cumulative_sum = np.cumsum(y_pred_node_seed)
+            over_dd25_indices = np.where(cumulative_sum >= dd25_value)[0]
+            if len(over_dd25_indices) > 0:
+                day_outbreak = over_dd25_indices[0]
+            else:
+                day_outbreak = -1  # no outbreak detected
+
+    else:
+        raise ValueError(f"Unknown strategy '{strategy}'.")
+
     return day_outbreak
 
 import matplotlib.pyplot as plt
